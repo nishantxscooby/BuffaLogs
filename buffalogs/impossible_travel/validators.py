@@ -1,8 +1,8 @@
 from ipaddress import ip_address, ip_network
 
+import pycountry
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-import pycountry
 
 
 def is_valid_country(value: str) -> bool:
@@ -40,9 +40,9 @@ def validate_countries_names(values):
         if not pycountry.countries.get(alpha_2=code.upper()):
             invalid_entries.append(code)
 
-    INVALID_COUNTRY_MSG = "The following country codes are invalid: "
+    INVALID_COUNTRY_MSG = _("The following country codes are invalid: ")
 
-    raise ValidationError((INVALID_COUNTRY_MSG + ", ".join(invalid_entries)))
+    raise ValidationError(_(INVALID_COUNTRY_MSG + ", ".join(invalid_entries)))
 
 
 def validate_ips_or_network(value):
