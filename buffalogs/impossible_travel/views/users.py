@@ -1,11 +1,15 @@
-import json
 from collections import defaultdict
 from datetime import timedelta
-from functools import wraps
+import json
 
 from dateutil.parser import isoparse
-from django.db.models import Count, Max
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
+from django.db.models import Count
+from django.http import (
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseNotFound,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
@@ -56,12 +60,37 @@ def users_template_view(request):
 
     charts = {}
     if selected_user:
+        timeline_chart = user_login_timeline_chart(
+            selected_user,
+            start_date,
+            end_date,
+        )
+        geo_chart = user_geo_distribution_chart(
+            selected_user,
+            start_date,
+            end_date,
+        )
+        device_chart = user_device_usage_chart(
+            selected_user,
+            start_date,
+            end_date,
+        )
+        tod_chart = user_time_of_day_chart(
+            selected_user,
+            start_date,
+            end_date,
+        )
+        freq_chart = user_login_frequency_chart(
+            selected_user,
+            start_date,
+            end_date,
+        )
         charts = {
-            "timeline": user_login_timeline_chart(selected_user, start_date, end_date),
-            "geo": user_geo_distribution_chart(selected_user, start_date, end_date),
-            "device": user_device_usage_chart(selected_user, start_date, end_date),
-            "time_of_day": user_time_of_day_chart(selected_user, start_date, end_date),
-            "frequency": user_login_frequency_chart(selected_user, start_date, end_date),
+            "timeline": timeline_chart,
+            "geo": geo_chart,
+            "device": device_chart,
+            "time_of_day": tod_chart,
+            "frequency": freq_chart,
         }
 
     context = {
@@ -69,7 +98,10 @@ def users_template_view(request):
         "selected_user": selected_user,
         "start_date": start_date.strftime("%B %-d, %Y"),
         "end_date": end_date.strftime("%B %-d, %Y"),
-        "charts": {k: (v if isinstance(v, str) else v.render(is_unicode=True)) for k, v in charts.items()},
+        "charts": {
+            k: (v if isinstance(v, str) else v.render(is_unicode=True))
+            for k, v in charts.items()
+        },
     }
     return render(request, "impossible_travel/users.html", context)
 
@@ -96,7 +128,9 @@ def risk_score_api(request):
     if is_naive(end_date):
         end_date = make_aware(end_date)
 
-    user_risk_list = User.objects.filter(updated__range=(start_date, end_date)).values()
+    user_risk_list = User.objects.filter(
+        updated__range=(start_date, end_date),
+    ).values()
     for key in user_risk_list:
         result[key["username"]] = key["risk_score"]
     data = json.dumps(result)
@@ -106,10 +140,12 @@ def risk_score_api(request):
 @require_http_methods(["GET"])
 def user_device_usage_api(request, pk):
     """
-    API endpoint to retrieve the count of devices used by a user within a specified date range.
+    API endpoint to retrieve the count of devices used by a user within a
+    specified date range.
 
     Args:
-        request: The HTTP request object containing GET parameters 'start' and 'end' for the date range.
+        request: The HTTP request object containing GET parameters 'start' and
+                 'end' for the date range.
         pk: The primary key of the user.
 
     Returns:
@@ -131,7 +167,14 @@ def user_device_usage_api(request, pk):
     except User.DoesNotExist:
         return HttpResponseNotFound("User not found")
 
-    devices = Login.objects.filter(user=user, timestamp__range=(start_date, end_date)).values("user_agent").annotate(count=Count("id"))
+    devices = (
+        Login.objects.filter(
+            user=user,
+            timestamp__range=(start_date, end_date),
+        )
+        .values("user_agent")
+        .annotate(count=Count("id"))
+    )
     device_counts = {d["user_agent"]: d["count"] for d in devices}
 
     return JsonResponse({"devices": device_counts})
@@ -140,10 +183,12 @@ def user_device_usage_api(request, pk):
 @require_http_methods(["GET"])
 def user_login_frequency_api(request, pk):
     """
-    API endpoint to retrieve the daily login frequency of a user within a specified date range.
+    API endpoint to retrieve the daily login frequency of a user within a
+    specified date range.
 
     Args:
-        request: The HTTP request object containing GET parameters 'start' and 'end' for the date range.
+        request: The HTTP request object containing GET parameters 'start' and
+                 'end' for the date range.
         pk: The primary key of the user.
 
     Returns:
@@ -174,21 +219,27 @@ def user_login_frequency_api(request, pk):
         login_day = login.timestamp.date()
         daily_counts[login_day] = daily_counts.get(login_day, 0) + 1
 
-    daily_logins = [{"date": date.isoformat(), "count": count} for date, count in daily_counts.items()]
+    daily_logins = [
+        {"date": date.isoformat(), "count": count}
+        for date, count in daily_counts.items()
+    ]
     return JsonResponse({"daily_logins": daily_logins})
 
 
 @require_http_methods(["GET"])
 def user_time_of_day_api(request, pk):
     """
-    API endpoint to retrieve the distribution of user logins by hour and weekday within a specified date range.
+    API endpoint to retrieve the distribution of user logins by hour and
+    weekday within a specified date range.
 
     Args:
-        request: The HTTP request object containing GET parameters 'start' and 'end' for the date range.
+        request: The HTTP request object containing GET parameters 'start' and
+                 'end' for the date range.
         pk: The primary key of the user.
 
     Returns:
-        JsonResponse: A JSON object containing hourly login counts grouped by weekday.
+        JsonResponse: A JSON object containing hourly login counts grouped by
+                      weekday.
     """
     start_date = parse_datetime(request.GET.get("start", ""))
     end_date = parse_datetime(request.GET.get("end", ""))
@@ -224,10 +275,12 @@ def user_time_of_day_api(request, pk):
 @require_http_methods(["GET"])
 def user_geo_distribution_api(request, pk):
     """
-    API endpoint to retrieve the geographical distribution of user logins within a specified date range.
+    API endpoint to retrieve the geographical distribution of user logins
+    within a specified date range.
 
     Args:
-        request: The HTTP request object containing GET parameters 'start' and 'end' for the date range.
+        request: The HTTP request object containing GET parameters 'start' and
+                 'end' for the date range.
         pk: The primary key of the user.
 
     Returns:

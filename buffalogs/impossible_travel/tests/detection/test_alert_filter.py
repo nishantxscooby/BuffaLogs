@@ -3,7 +3,11 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.test import TestCase
-from impossible_travel.constants import AlertDetectionType, AlertFilterType, UserRiskScoreType
+from impossible_travel.constants import (
+    AlertDetectionType,
+    AlertFilterType,
+    UserRiskScoreType,
+)
 from impossible_travel.models import Alert, Config, User
 from impossible_travel.modules import alert_filter
 
@@ -23,13 +27,19 @@ class TestAlertFilter(TestCase):
             id=1,
             user=db_user1,
             name=AlertDetectionType.NEW_DEVICE,
-            description="Login from new device for User: Lorena Goldoni, at: 2025-01-20T08:00:00.000Z",
+            description=(
+                "Login from new device for User: Lorena Goldoni, at: "
+                "2025-01-20T08:00:00.000Z"
+            ),
             login_raw_data={
                 "id": 1,
                 "ip": "1.2.3.4",
                 "lat": 35.2196,
                 "lon": 137.062,
-                "agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0",
+                "agent": (
+                    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) "
+                    "Gecko/20100101 Firefox/12.0"
+                ),
                 "index": "cloud",
                 "country": "Italy",
                 "organization": "ISP1",
@@ -41,13 +51,20 @@ class TestAlertFilter(TestCase):
             id=2,
             user=db_user2,
             name=AlertDetectionType.NEW_COUNTRY,
-            description="Login from new country for User: Aisha Delgado, at: 2025-01-20T08:01:00.000Z, from: Japan",
+            description=(
+                "Login from new country for User: Aisha Delgado, at: "
+                "2025-01-20T08:01:00.000Z, from: Japan"
+            ),
             login_raw_data={
                 "id": 2,
                 "ip": "5.6.7.8",
                 "lat": 35.2196,
                 "lon": 137.062,
-                "agent": "Mozilla/5.0 (Linux; Android 13; SM-G998U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+                "agent": (
+                    "Mozilla/5.0 (Linux; Android 13; SM-G998U) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 "
+                    "Mobile Safari/537.36"
+                ),
                 "index": "cloud",
                 "country": "Japan",
                 "organization": "ISP2",
@@ -65,39 +82,61 @@ class TestAlertFilter(TestCase):
         # check correct default values population in Config object
         db_config = Config.objects.create(id=1)
         self.assertListEqual(db_config.ignored_users, ["Not Available", "N/A"])
-        self.assertEqual(db_config.ignored_users, settings.CERTEGO_BUFFALOGS_IGNORED_USERS)
+        self.assertEqual(
+            db_config.ignored_users, settings.CERTEGO_BUFFALOGS_IGNORED_USERS
+        )
         self.assertListEqual(db_config.enabled_users, [])
-        self.assertEqual(db_config.enabled_users, settings.CERTEGO_BUFFALOGS_ENABLED_USERS)
+        self.assertEqual(
+            db_config.enabled_users, settings.CERTEGO_BUFFALOGS_ENABLED_USERS
+        )
         self.assertListEqual(db_config.ignored_ips, ["127.0.0.1"])
         self.assertEqual(db_config.ignored_ips, settings.CERTEGO_BUFFALOGS_IGNORED_IPS)
         self.assertListEqual(db_config.ignored_ISPs, [])
-        self.assertEqual(db_config.ignored_ISPs, settings.CERTEGO_BUFFALOGS_IGNORED_ISPS)
+        self.assertEqual(
+            db_config.ignored_ISPs, settings.CERTEGO_BUFFALOGS_IGNORED_ISPS
+        )
         self.assertListEqual(db_config.allowed_countries, [])
-        self.assertEqual(db_config.allowed_countries, settings.CERTEGO_BUFFALOGS_ALLOWED_COUNTRIES)
+        self.assertEqual(
+            db_config.allowed_countries,
+            settings.CERTEGO_BUFFALOGS_ALLOWED_COUNTRIES,
+        )
         self.assertListEqual(db_config.vip_users, [])
         self.assertEqual(db_config.vip_users, settings.CERTEGO_BUFFALOGS_VIP_USERS)
         self.assertFalse(db_config.alert_is_vip_only)
         self.assertEqual(db_config.alert_minimum_risk_score, "Medium")
         self.assertEqual(db_config.threshold_user_risk_alert, "Medium")
-        self.assertListEqual(db_config.filtered_alerts_types, ["User Risk Threshold", "New Device"])
+        self.assertListEqual(
+            db_config.filtered_alerts_types, ["User Risk Threshold", "New Device"]
+        )
         self.assertTrue(db_config.ignore_mobile_logins)
         self.assertTrue(db_config.ignored_impossible_travel_all_same_country)
         self.assertListEqual(db_config.ignored_impossible_travel_countries_couples, [])
         self.assertEqual(db_config.distance_accepted, 100)
-        self.assertEqual(db_config.distance_accepted, settings.CERTEGO_BUFFALOGS_DISTANCE_KM_ACCEPTED)
+        self.assertEqual(
+            db_config.distance_accepted,
+            settings.CERTEGO_BUFFALOGS_DISTANCE_KM_ACCEPTED,
+        )
         self.assertEqual(db_config.vel_accepted, 300)
-        self.assertEqual(db_config.vel_accepted, settings.CERTEGO_BUFFALOGS_VEL_TRAVEL_ACCEPTED)
+        self.assertEqual(
+            db_config.vel_accepted, settings.CERTEGO_BUFFALOGS_VEL_TRAVEL_ACCEPTED
+        )
         self.assertEqual(db_config.atypical_country_days, 30)
         self.assertEqual(
             db_config.atypical_country_days,
             settings.CERTEGO_BUFFALOGS_ATYPICAL_COUNTRY_DAYS,
         )
         self.assertEqual(db_config.user_max_days, 60)
-        self.assertEqual(db_config.user_max_days, settings.CERTEGO_BUFFALOGS_USER_MAX_DAYS)
+        self.assertEqual(
+            db_config.user_max_days, settings.CERTEGO_BUFFALOGS_USER_MAX_DAYS
+        )
         self.assertEqual(db_config.login_max_days, 45)
-        self.assertEqual(db_config.login_max_days, settings.CERTEGO_BUFFALOGS_LOGIN_MAX_DAYS)
+        self.assertEqual(
+            db_config.login_max_days, settings.CERTEGO_BUFFALOGS_LOGIN_MAX_DAYS
+        )
         self.assertEqual(db_config.alert_max_days, 45)
-        self.assertEqual(db_config.alert_max_days, settings.CERTEGO_BUFFALOGS_ALERT_MAX_DAYS)
+        self.assertEqual(
+            db_config.alert_max_days, settings.CERTEGO_BUFFALOGS_ALERT_MAX_DAYS
+        )
         self.assertEqual(db_config.ip_max_days, 45)
         self.assertEqual(db_config.ip_max_days, settings.CERTEGO_BUFFALOGS_IP_MAX_DAYS)
         db_alert1 = Alert.objects.get(id=1)
@@ -350,7 +389,9 @@ class TestAlertFilter(TestCase):
         db_alert = Alert.objects.get(user__username="Lorygold")
         alert_filter.match_filters(alert=db_alert, app_config=db_config)
         self.assertTrue(db_alert.is_filtered)
-        self.assertListEqual(["is_vip_filter", "alert_minimum_risk_score filter"], db_alert.filter_type)
+        self.assertListEqual(
+            ["is_vip_filter", "alert_minimum_risk_score filter"], db_alert.filter_type
+        )
 
     def test_match_filters_location_ignored_ips(self):
         # test filter with: ignored_ips = ["1.2.3.4"]
@@ -526,7 +567,9 @@ class TestAlertFilter(TestCase):
         alert_filter.match_filters(alert=db_alert, app_config=db_config)
 
     @patch("impossible_travel.modules.detection.update_risk_level")
-    def test_match_filters_ignored_impossible_travel_all_same_country(self, mock_update_risk_level):
+    def test_match_filters_ignored_impossible_travel_all_same_country(
+        self, mock_update_risk_level
+    ):
         # test with ignored_impossible_travel_all_same_country = True
         db_config = Config.objects.create(
             ignored_impossible_travel_all_same_country=True,
@@ -547,7 +590,11 @@ class TestAlertFilter(TestCase):
                 "lat": 43.3178,
                 "lon": -5.4125,
                 "country": "Italy",
-                "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
+                "agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 "
+                    "Safari/537.36 Edge/12.246"
+                ),
                 "buffalogs": {
                     "avg_speed": 810,
                     "start_lat": 41.3178,

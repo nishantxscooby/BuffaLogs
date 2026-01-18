@@ -22,31 +22,37 @@ class ValidatorsTest(TestCase):
     """Class for testing validators.py methods"""
 
     def test_validate_string_or_regex_invalid_type(self):
-        """Testing the function validate_string_or_regex with not a list value"""
+        """Testing the function validate_string_or_regex with not a list
+        value"""
         with self.assertRaises(ValidationError) as context:
             validate_string_or_regex(value="Siddhartha")
-        self.assertIn("The value 'Siddhartha' must be a list", str(context.exception))
+        msg = "The value 'Siddhartha' must be a list"
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_string_or_regex_invalid_string(self):
-        """Testing the function validate_string_or_regex with no string values"""
+        """Testing the function validate_string_or_regex with no string
+        values"""
         with self.assertRaises(ValidationError) as context:
             validate_string_or_regex(["Hermann Hesse", 123])
-        self.assertIn(
-            "The single element '123' in the '['Hermann Hesse', 123]' list field must be a string",
-            str(context.exception),
+        msg = (
+            "The single element '123' in the '['Hermann Hesse', 123]' list "
+            "field must be a string"
         )
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_string_or_regex_invalid_regex(self):
         """Testing the function validate_string_or_regex with invalid regex"""
         with self.assertRaises(ValidationError) as context:
             validate_string_or_regex(["Hermann Hesse", "[a-z"])
-        self.assertIn(
-            "The single element '[a-z' in the '['Hermann Hesse', '[a-z']' list field is not a valid regex pattern",
-            str(context.exception),
+        msg = (
+            "The single element '[a-z' in the '['Hermann Hesse', '[a-z']' "
+            "list field is not a valid regex pattern"
         )
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_string_or_regex_empty_list(self):
-        """Testing the function validate_string_or_regex with empty default list"""
+        """Testing the function validate_string_or_regex with empty default
+        list"""
         # no exception
         try:
             validate_string_or_regex([])
@@ -54,7 +60,10 @@ class ValidatorsTest(TestCase):
             self.fail("The test for the validation with an empty list shouldn't fail")
 
     def test_validate_string_or_regex_valid(self):
-        """Testing the function validate_string_or_regex with a list of valid strings and regex"""
+        """
+        Testing the function validate_string_or_regex with a list of valid
+        strings and regex
+        """
         valid_values = ["Pluto", "[a-z]+.*", "Dog"]
         # no exception
         try:
@@ -72,12 +81,14 @@ class ValidatorsTest(TestCase):
             self.fail("The test with correct IPs list values shouldn't fail")
 
     def test_validate_ips_or_network_invalid_type(self):
-        """Testing the function validate_ips_or_network with an incorrect type"""
+        """Testing the function validate_ips_or_network with an incorrect
+        type"""
         with self.assertRaises(ValidationError):
             validate_ips_or_network(["192.0.2.12", 1])
 
     def test_validate_ips_or_network_invalid_values(self):
-        """Testing the function validate_ips_or_network with incorrect values"""
+        """Testing the function validate_ips_or_network with incorrect
+        values"""
         with self.assertRaises(ValidationError):
             validate_ips_or_network(["12.45.5"])
 
@@ -120,7 +131,10 @@ class ValidatorsTest(TestCase):
         try:
             validate_countries_names(default_countries)
         except ValidationError:
-            self.fail("validate_countries_names raised ValidationError unexpectedly for default allowed countries!")
+            self.fail(
+                "validate_countries_names raised ValidationError unexpectedly "
+                "for default allowed countries!"
+            )
 
     def test_validate_country_couples_list_single_elem(self):
         """Test that a single string (not a list of lists) raises an exception"""
@@ -129,31 +143,30 @@ class ValidatorsTest(TestCase):
         self.assertIn("Value must be a list.", str(context.exception))
 
     def test_validate_country_couples_list_single_list(self):
-        """Test that a single list (not a list of lists) raises an exception"""
+        """Test that a single list (not a list of lists) raises an
+        exception"""
         with self.assertRaises(ValidationError) as context:
             validate_country_couples_list(["Italy", "Germany"])
-        self.assertIn(
-            "Each single value must be a list of 2 elements (list of lists).",
-            str(context.exception),
-        )
+        msg = "Each single value must be a list of 2 elements (list of lists)."
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_country_couples_list_too_elements(self):
         """Test that a list of more than 2 elements raises an exception"""
         with self.assertRaises(ValidationError) as context:
             validate_country_couples_list([["Italy", "Germany", "France"]])
-        self.assertIn(
-            "Each single value must be a list of 2 elements (list of lists).",
-            str(context.exception),
-        )
+        msg = "Each single value must be a list of 2 elements (list of lists)."
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_country_couples_list_wrong_country_name(self):
         """Test that a list containing a wrong country name raises an exception"""
         with self.assertRaises(ValidationError) as context:
             validate_country_couples_list([["Italy", "wrong_name"]])
-        self.assertIn("The following country names are invalid", str(context.exception))
+        msg = "The following country names are invalid"
+        self.assertIn(msg, str(context.exception))
 
     def test_validate_country_couples_list_correct(self):
-        """Test that a correct list of lists of countries is validated correctly"""
+        """Test that a correct list of lists of countries is validated
+        correctly"""
         # no exception
         valid_values = [["Italy", "France"], ["Italy", "Italy"], ["Germany", "France"]]
         try:
@@ -176,14 +189,17 @@ class ValidatorsTest(TestCase):
 
     def test_validate_datetime_str_aware_passthrough(self):
         """
-        Test that an already aware datetime string is correctly parsed and passed through.
+        Test that an already aware datetime string is correctly parsed and
+        passed through.
         """
         aware_dt_str = "2023-10-26T14:30:00+00:00"
         aware_dt = validate_datetime_str(aware_dt_str)
 
         self.assertIsInstance(aware_dt, datetime.datetime)
         self.assertTrue(not is_naive(aware_dt))
-        expected_aware = datetime.datetime(2023, 10, 26, 14, 30, 0, tzinfo=datetime.timezone.utc)
+        expected_aware = datetime.datetime(
+            2023, 10, 26, 14, 30, 0, tzinfo=datetime.timezone.utc
+        )
         self.assertEqual(aware_dt, expected_aware)
 
     def test_validate_datetime_str_empty_invalid(self):
@@ -195,7 +211,10 @@ class ValidatorsTest(TestCase):
         with self.assertRaises(ValidationError) as cm:
             validate_datetime_str("not a date")
 
-        err_msg = "not a date is not a valid datetime format. Please use ISO 8601 format (e.g., YYYY-MM-DDTHH:MM:SSZ)."
+        err_msg = (
+            "not a date is not a valid datetime format. Please use ISO 8601 "
+            "format (e.g., YYYY-MM-DDTHH:MM:SSZ)."
+        )
         self.assertIn(err_msg, str(cm.exception))
 
     def test_validate_boolean_str(self):
@@ -210,7 +229,10 @@ class ValidatorsTest(TestCase):
         self.assertFalse(validate_boolean_str("false"))
         self.assertFalse(validate_boolean_str("False"))
 
-        with self.assertRaisesRegex(ValidationError, "Notification status must be true or false, got anything"):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "Notification status must be true or false, got anything",
+        ):
             self.assertFalse(validate_boolean_str("anything"))
 
         # None case
@@ -234,19 +256,23 @@ class ValidatorsTest(TestCase):
         # Test empty string
         with self.assertRaisesRegex(
             ValidationError,
-            "Risk score must be an integer 0-7 or one of: High, Medium, Low, No Risk",
+            "Risk score must be an integer 0-7 or one of: High, Medium, Low, "
+            "No Risk",
         ):
             validate_risk_score("")
 
         # Test empty string
         with self.assertRaisesRegex(
             ValidationError,
-            "Risk score must be an integer 0-7 or one of: High, Medium, Low, No Risk",
+            "Risk score must be an integer 0-7 or one of: High, Medium, Low, "
+            "No Risk",
         ):
             validate_risk_score("Invalid Risk Score")
 
         # Test out of range risk score
-        with self.assertRaisesRegex(ValidationError, "risk score value is out of range"):
+        with self.assertRaisesRegex(
+            ValidationError, "risk score value is out of range"
+        ):
             validate_risk_score("8")
 
     def test_validate_alert_query_full_valid(self):
@@ -274,7 +300,9 @@ class ValidatorsTest(TestCase):
         validated_query = validate_alert_query(query_dict)
 
         # Expected datetime conversions
-        aware_start = datetime.datetime(2023, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        aware_start = datetime.datetime(
+            2023, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc
+        )
         naive_end = datetime.datetime(2023, 1, 2, 0, 0, 0)
         aware_end = make_aware(naive_end, get_current_timezone())
 
@@ -292,7 +320,8 @@ class ValidatorsTest(TestCase):
 
     def test_validate_alert_query_missing_optional(self):
         """
-        Test with minimal dictionary (relying on default values and None for optional fields).
+        Test with minimal dictionary (relying on default values and None for
+        optional fields).
         """
         query_dict = {}
         validated_query = validate_alert_query(query_dict)
@@ -374,13 +403,17 @@ class ValidatorsTest(TestCase):
         try:
             validate_tags(["security_threat", "under_investigation"])
         except ValidationError:
-            self.fail("validate_tags() raised ValidationError unexpectedly for valid tags!")
+            self.fail(
+                "validate_tags() raised ValidationError unexpectedly for valid tags!"
+            )
 
         with self.assertRaises(ValidationError):
             validate_tags(["invalid_tag"])
 
         with self.assertRaises(ValidationError):
-            validate_tags(["security_threat", "security_threat"])  # Duplicates not allowed
+            validate_tags(
+                ["security_threat", "security_threat"]
+            )  # Duplicates not allowed
 
         with self.assertRaises(ValidationError):
             validate_tags("security_threat")  # Tags must be passed as Lists

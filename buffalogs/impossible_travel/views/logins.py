@@ -1,5 +1,5 @@
-import json
 from datetime import timedelta
+import json
 
 from django.http import JsonResponse
 from django.utils import timezone
@@ -18,7 +18,10 @@ def get_user_logins(request, user_id):
     ingestion = IngestionFactory().get_ingestion_class()
     user_logins = ingestion.process_user_logins(start_date, end_date, username)
     normalized_user_logins = ingestion.normalize_fields(user_logins)
-    return JsonResponse(json.dumps(normalized_user_logins, default=str), safe=False)
+    return JsonResponse(
+        json.dumps(normalized_user_logins, default=str),
+        safe=False,
+    )
 
 
 def get_user_unique_logins(request, user_id):

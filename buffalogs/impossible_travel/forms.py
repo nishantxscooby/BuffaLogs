@@ -6,7 +6,9 @@ from .models import Alert, Config, TaskSettings, User
 
 
 class MultiChoiceArrayWidget(forms.SelectMultiple):
-    """Widget for user-friendly interface for ArrayField with multiple choices"""
+    """
+    Widget for user-friendly interface for ArrayField with multiple choices
+    """
 
     def __init__(self, choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,11 +36,16 @@ class MultiChoiceArrayField(SimpleArrayField):
 
 
 class ShortLabelChoiceField(forms.ChoiceField):
-    """ChoiceField personalized in order to show the short_value as label on DjangoValue"""
+    """
+    ChoiceField personalized in order to show the short_value as label
+    on DjangoValue
+    """
 
     def __init__(self, *args, **kwargs):
         choices = kwargs.pop("choices", [])
-        formatted_choices = [("", "---------")] + [(value, value) for value, _ in choices]
+        formatted_choices = [("", "---------")] + [
+            (value, value) for value, _ in choices
+        ]
         super().__init__(*args, choices=formatted_choices, required=False, **kwargs)
 
 
@@ -64,13 +71,17 @@ class ConfigAdminForm(forms.ModelForm):
         base_field=forms.CharField(),
         choices=AlertDetectionType.choices,
         required=False,
-        help_text="Hold down “Control”, or “Command” on a Mac, to select more than one.",
+        help_text=(
+            "Hold down “Control”, or “Command” on a Mac, to select more than " "one."
+        ),
     )
     risk_score_increment_alerts = MultiChoiceArrayField(
         base_field=forms.CharField(),
         choices=AlertDetectionType.choices,
         required=True,
-        help_text="Hold down “Control”, or “Command” on a Mac, to select more than one.",
+        help_text=(
+            "Hold down “Control”, or “Command” on a Mac, to select more than " "one."
+        ),
     )
     alert_minimum_risk_score = ShortLabelChoiceField(choices=UserRiskScoreType.choices)
     threshold_user_risk_alert = ShortLabelChoiceField(choices=UserRiskScoreType.choices)

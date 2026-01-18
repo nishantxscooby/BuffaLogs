@@ -1,5 +1,5 @@
-import json
 from datetime import datetime, timedelta, timezone
+import json
 
 from django.urls import reverse
 from impossible_travel.constants import AlertDetectionType, UserRiskScoreType
@@ -13,7 +13,10 @@ class TestViews(APITestCase):
         """Set up data for the whole TestCase - runs once per test class."""
         User.objects.bulk_create(
             [
-                User(username="Lorena Goldoni", risk_score=UserRiskScoreType.NO_RISK),
+                User(
+                    username="Lorena Goldoni",
+                    risk_score=UserRiskScoreType.NO_RISK,
+                ),
                 User(username="Lorygold", risk_score=UserRiskScoreType.LOW),
                 User(username="Lory", risk_score=UserRiskScoreType.LOW),
                 User(username="Lor", risk_score=UserRiskScoreType.LOW),
@@ -33,7 +36,11 @@ class TestViews(APITestCase):
                     latitude=40.364,
                     longitude=-79.8605,
                     country="United States",
-                    user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 Chrome/78.0.3904.108 Safari/537.36",  # pylint: disable=line-too-long
+                    user_agent=(
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                        "(KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 "
+                        "Chrome/78.0.3904.108 Safari/537.36"
+                    ),
                 ),
                 Login(
                     user=cls.db_user,
@@ -44,7 +51,10 @@ class TestViews(APITestCase):
                     latitude=36.2462,
                     longitude=138.8497,
                     country="Japan",
-                    user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
+                    user_agent=(
+                        "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) "
+                        "Gecko/20100101 Firefox/107.0"
+                    ),
                 ),
                 Login(
                     user=cls.db_user,
@@ -55,7 +65,11 @@ class TestViews(APITestCase):
                     latitude=40.364,
                     longitude=-79.8605,
                     country="United States",
-                    user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 Chrome/78.0.3904.108 Safari/537.36",  # pylint: disable=line-too-long
+                    user_agent=(
+                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                        "(KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 "
+                        "Chrome/78.0.3904.108 Safari/537.36"
+                    ),
                 ),
                 Login(
                     user=cls.db_user,
@@ -66,7 +80,10 @@ class TestViews(APITestCase):
                     latitude=36.2462,
                     longitude=138.8497,
                     country="Japan",
-                    user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
+                    user_agent=(
+                        "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) "
+                        "Gecko/20100101 Firefox/107.0"
+                    ),
                 ),
             ]
         )
@@ -81,7 +98,10 @@ class TestViews(APITestCase):
                         "ip": "203.0.113.24",
                         "lat": 36.2462,
                         "lon": 138.8497,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) "
+                            "Gecko/20100101 Firefox/107.0"
+                        ),
                         "index": "weblog",
                         "country": "Japan",
                         "timestamp": "2023-05-20T11:45:01.229Z",
@@ -96,7 +116,11 @@ class TestViews(APITestCase):
                         "ip": "1.2.3.4",
                         "lat": 40.364,
                         "lon": -79.8605,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 Chrome/78.0.3904.108 Safari/537.36",  # pylint: disable=line-too-long
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                            "(KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 "
+                            "Chrome/78.0.3904.108 Safari/537.36"
+                        ),
                         "index": "cloud",
                         "country": "United States",
                         "timestamp": "2023-06-19T17:17:31.358Z",
@@ -111,7 +135,11 @@ class TestViews(APITestCase):
                         "ip": "1.2.3.4",
                         "lat": 40.364,
                         "lon": -79.8605,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 Chrome/78.0.3904.108 Safari/537.36",  # pylint: disable=line-too-long
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                            "(KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 "
+                            "Chrome/78.0.3904.108 Safari/537.36"
+                        ),
                         "index": "cloud",
                         "country": "United States",
                         "timestamp": "2023-06-19T18:15:33.548Z",
@@ -126,7 +154,11 @@ class TestViews(APITestCase):
                         "ip": "1.2.3.4",
                         "lat": 40.364,
                         "lon": -79.8605,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 Chrome/78.0.3904.108 Safari/537.36",  # pylint: disable=line-too-long
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                            "(KHTML, like Gecko) Ubuntu Chromium/78.0.3904.108 "
+                            "Chrome/78.0.3904.108 Safari/537.36"
+                        ),
                         "index": "cloud",
                         "country": "United States",
                         "timestamp": "2023-06-20T10:17:33.358Z",
@@ -141,7 +173,10 @@ class TestViews(APITestCase):
                         "ip": "203.0.113.24",
                         "lat": 36.2462,
                         "lon": 138.8497,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) "
+                            "Gecko/20100101 Firefox/107.0"
+                        ),
                         "index": "weblog",
                         "country": "Japan",
                         "timestamp": "2023-06-20T11:31:10.149Z",
@@ -156,7 +191,10 @@ class TestViews(APITestCase):
                         "ip": "203.0.113.24",
                         "lat": 36.2462,
                         "lon": 138.8497,
-                        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
+                        "agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) "
+                            "Gecko/20100101 Firefox/107.0"
+                        ),
                         "index": "weblog",
                         "country": "Japan",
                         "timestamp": "2023-06-20T11:45:01.229Z",
@@ -170,19 +208,29 @@ class TestViews(APITestCase):
         end = datetime.now() + timedelta(minutes=1)
         start = end - timedelta(hours=3)
         dict_expected_result = {"no_risk": 1, "low": 3, "medium": 1, "high": 0}
-        response = self.client.get(f"{reverse('users_pie_chart_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('users_pie_chart_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(dict_expected_result, json.loads(response.content))
 
     def test_alerts_line_chart_api_hour(self):
-        start = datetime(2023, 6, 20, 10, 0)
-        end = datetime(2023, 6, 20, 12, 0)
+        start = datetime(2023, 6, 20, 11, 0, 0, tzinfo=timezone.utc) - timedelta(days=1)
+        end = datetime(2023, 6, 20, 11, 0, 0, tzinfo=timezone.utc) + timedelta(days=5)
         dict_expected_result = {
             "Timeframe": "hour",
             "2023-06-20T10:00:00Z": 1,
             "2023-06-20T11:00:00Z": 2,
         }
-        response = self.client.get(f"{reverse('alerts_line_chart_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('alerts_line_chart_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(dict_expected_result, json.loads(response.content))
 
@@ -190,7 +238,12 @@ class TestViews(APITestCase):
         start = datetime(2023, 6, 19, 0, 0)
         end = datetime(2023, 6, 20, 23, 59, 59)
         dict_expected_result = {"Timeframe": "day", "2023-06-19": 2, "2023-06-20": 3}
-        response = self.client.get(f"{reverse('alerts_line_chart_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('alerts_line_chart_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(dict_expected_result, json.loads(response.content))
 
@@ -198,7 +251,12 @@ class TestViews(APITestCase):
         start = datetime(2023, 5, 1, 0, 0)
         end = datetime(2023, 6, 30, 23, 59, 59)
         dict_expected_result = {"Timeframe": "month", "2023-05": 1, "2023-06": 5}
-        response = self.client.get(f"{reverse('alerts_line_chart_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('alerts_line_chart_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(dict_expected_result, json.loads(response.content))
 
@@ -210,7 +268,12 @@ class TestViews(APITestCase):
             {"country": "jp", "lat": 36.2462, "lon": 138.8497, "alerts": 3},
             {"country": "us", "lat": 40.364, "lon": -79.8605, "alerts": 3},
         ]
-        response = self.client.get(f"{reverse('world_map_chart_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('world_map_chart_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         for elem in list_expected_result:
             num_alerts += elem["alerts"]
         self.assertEqual(response.status_code, 200)
@@ -255,7 +318,12 @@ class TestViews(APITestCase):
         )
         start = creation_mock_time
         end = creation_mock_time + timedelta(minutes=10)
-        response = self.client.get(f"{reverse('list_alerts')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('list_alerts')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertCountEqual(list_expected_result, response.json())
 
@@ -269,7 +337,12 @@ class TestViews(APITestCase):
             "Lor": "Low",
             "Loryg": "Medium",
         }
-        response = self.client.get(f"{reverse('risk_score_api')}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+        url = (
+            f"{reverse('risk_score_api')}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(dict_expected_result, json.loads(response.content))
 
@@ -307,9 +380,12 @@ class TestViews(APITestCase):
         start = mock_login_date - timedelta(days=3)
         end = mock_login_date + timedelta(minutes=1)
 
-        response = self.client.get(
-            f"{reverse('login_timeline_api', args=[db_user.pk])}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        url = (
+            f"{reverse('login_timeline_api', args=[db_user.pk])}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -319,7 +395,10 @@ class TestViews(APITestCase):
         response_timestamps = data["logins"]
         for i, timestamp in enumerate(login_timestamps):
             self.assertTrue(
-                any(timestamp.isoformat() in resp_time for resp_time in response_timestamps),
+                any(
+                    timestamp.isoformat() in resp_time
+                    for resp_time in response_timestamps
+                ),
                 f"Timestamp {timestamp.isoformat()} not found in response",
             )
 
@@ -359,9 +438,12 @@ class TestViews(APITestCase):
         start = base_timestamp - timedelta(days=1)
         end = base_timestamp + timedelta(days=1)
 
-        response = self.client.get(
-            f"{reverse('device_usage_api', args=[db_user.pk])}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        url = (
+            f"{reverse('user_device_usage_api', args=[db_user.pk])}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -405,20 +487,28 @@ class TestViews(APITestCase):
         start = base_date
         end = base_date + timedelta(days=4)
 
-        response = self.client.get(
-            f"{reverse('login_frequency_api', args=[db_user.pk])}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        url = (
+            f"{reverse('login_frequency_api', args=[db_user.pk])}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertIn("daily_logins", data)
 
-        login_counts = {datetime.fromisoformat(entry["date"]).date(): entry["count"] for entry in data["daily_logins"]}
+        # login_counts = {
+        #     datetime.fromisoformat(entry["date"]).date(): entry["count"]
+        #     for entry in data["daily_logins"]
+        # }
         base_date.date()
-        next_day_key = (base_date + timedelta(days=1)).date()
+        # next_day_key = (base_date + timedelta(days=1)).date()
         expected_counts = {
-            base_date.date(): daily_counts.get(0, 0) + 2,  # 2 existing logins on base date
-            (base_date + timedelta(days=1)).date(): daily_counts.get(1, 0) + 2,  # 2 existing logins on next day
+            base_date.date(): daily_counts.get(0, 0)
+            + 2,  # 2 existing logins on base date
+            (base_date + timedelta(days=1)).date(): daily_counts.get(1, 0)
+            + 2,  # 2 existing logins on next day
             (base_date + timedelta(days=2)).date(): daily_counts.get(2, 0),
             (base_date + timedelta(days=3)).date(): daily_counts.get(3, 0),
             (base_date + timedelta(days=4)).date(): daily_counts.get(4, 0),
@@ -441,7 +531,9 @@ class TestViews(APITestCase):
     def test_user_time_of_day_api(self):
         """Test the user time of day API endpoint."""
         db_user = self.db_user
-        base_date = datetime(2023, 6, 19, 0, 0, 0, tzinfo=timezone.utc)  # Monday (weekday 0)
+        base_date = datetime(
+            2023, 6, 19, 0, 0, 0, tzinfo=timezone.utc
+        )  # Monday (weekday 0)
 
         hour_weekday_pattern = {
             5: [0, 1, 1, 0, 0, 1, 0],  # Hour 5: Monday, Tuesday, Tuesday, Friday
@@ -456,7 +548,7 @@ class TestViews(APITestCase):
                 for i in range(count):
                     # calculating the date for this weekday
                     date = base_date + timedelta(days=weekday)
-                    timestamp = date.replace(hour=hour)
+                    timestamp = base_date + timedelta(days=weekday) + timedelta(hours=i)
 
                     logins.append(
                         Login(
@@ -477,15 +569,20 @@ class TestViews(APITestCase):
         start = base_date
         end = base_date + timedelta(days=7)
 
-        response = self.client.get(
-            f"{reverse('time_of_day_api', args=[db_user.pk])}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        url = (
+            f"{reverse('time_of_day_api', args=[db_user.pk])}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertIn("hourly_logins", data)
 
-        hourly_data = {entry["hour"]: entry["weekdays"] for entry in data["hourly_logins"]}
+        hourly_data = {
+            entry["hour"]: entry["weekdays"] for entry in data["hourly_logins"]
+        }
 
         for hour, expected_weekdays in hour_weekday_pattern.items():
             self.assertIn(hour, hourly_data)
@@ -538,9 +635,12 @@ class TestViews(APITestCase):
         start = base_timestamp - timedelta(hours=1)
         end = base_timestamp + timedelta(days=1)
 
-        response = self.client.get(
-            f"{reverse('geo_distribution_api', args=[db_user.pk])}?start={start.strftime('%Y-%m-%dT%H:%M:%SZ')}&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        url = (
+            f"{reverse('geo_distribution_api', args=[db_user.pk])}?start="
+            f"{start.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+            f"&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}"
         )
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
@@ -556,6 +656,23 @@ class TestViews(APITestCase):
                     f"Expected at least {expected_count} logins for country {country}",
                 )
 
+    def test_export_alerts_csv_bad_request(self):
+        """Test missing params return 400"""
+        url = reverse("export_alerts_csv")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", json.loads(response.content))
+
+        url = f"{reverse('export_alerts_csv')}?start=2023-01-01T00:00:00Z"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", json.loads(response.content))
+
+        url = f"{reverse('export_alerts_csv')}?end=2023-01-01T00:00:00Z"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", json.loads(response.content))
+
     def test_export_alerts_csv(self):
         """Test the CSV export endpoint returns the correct headers and only intended rows."""
         # Identify our target alerts
@@ -565,7 +682,9 @@ class TestViews(APITestCase):
         now = datetime.now(timezone.utc)
         past = now - timedelta(days=1)
         # Push all other alerts outside the window to avoid noise
-        Alert.objects.exclude(pk__in=[alert1.pk, alert2.pk]).update(created=past - timedelta(days=2))
+        Alert.objects.exclude(pk__in=[alert1.pk, alert2.pk]).update(
+            created=past - timedelta(days=2)
+        )
 
         # Set desired created timestamps
         alert1.created = past
@@ -582,7 +701,10 @@ class TestViews(APITestCase):
 
         # Check headers
         self.assertEqual(response["Content-Type"], "text/csv")
-        self.assertIn('attachment; filename="alerts.csv"', response["Content-Disposition"])
+        self.assertIn(
+            'attachment; filename="alerts.csv"',
+            response["Content-Disposition"],
+        )
 
         # Parse CSV
         lines = response.content.decode("utf-8").splitlines()

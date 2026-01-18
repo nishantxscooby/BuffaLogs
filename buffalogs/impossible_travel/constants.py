@@ -5,13 +5,20 @@ from django.utils.translation import gettext_lazy as _
 class AlertTagValues(models.TextChoices):
     """Type of Possible alert tags in the format (name=value, label).
 
-    * SECURITY_THREAT: Indicates that an initial alert has been reviewed and confirmed as a real security incident.
-    * NETWORK_ISSUE: Indicates an alert related to connectivity problems, high latency, or unusual traffic patterns.
-    * CONFIGURATION_ERROR: Indicates an alert triggered by misconfigurations in system or application settings.
-    * USER_ACTIVITY: Indicates an alert based on unusual or suspicious actions performed by a user or account.
-    * SYSTEM_HEALTH: Indicates an alert about the performance, availability, or general state of the underlying system/infrastructure.
-    * UNDER_INVESTIGATION: Marks an alert that is currently being reviewed and analyzed by an analyst.
-    * TEST_EVENT: Marks an alert that was intentionally triggered during testing, deployment, or validation exercises.
+    * SECURITY_THREAT: Indicates that an initial alert has been reviewed and
+    confirmed as a real security incident.
+    * NETWORK_ISSUE: Indicates an alert related to connectivity problems,
+    high latency, or unusual traffic patterns.
+    * CONFIGURATION_ERROR: Indicates an alert triggered by misconfigurations
+    in system or application settings.
+    * USER_ACTIVITY: Indicates an alert based on unusual or suspicious
+    actions performed by a user or account.
+    * SYSTEM_HEALTH: Indicates an alert about the performance, availability,
+    or general state of the underlying system/infrastructure.
+    * UNDER_INVESTIGATION: Marks an alert that is currently being reviewed
+    and analyzed by an analyst.
+    * TEST_EVENT: Marks an alert that was intentionally triggered during
+    testing, deployment, or validation exercises.
     """
 
     SECURITY_THREAT = "security_threat", _("Alert confirmed as real incident")
@@ -70,7 +77,9 @@ class UserRiskScoreType(models.TextChoices):
             min_value = cls.get_risk_threshold(min_value)
         if isinstance(max_value, str):
             max_value = cls.get_risk_threshold(max_value)
-        risk_range = set(cls.get_risk_level(value) for value in range(min_value, max_value))
+        risk_range = set(
+            cls.get_risk_level(value) for value in range(min_value, max_value)
+        )
         return risk_range
 
     @classmethod
@@ -85,9 +94,13 @@ class UserRiskScoreType(models.TextChoices):
         :return : "lower", "equal" or "higher"
         :rtype: RiskComparisonType Enum
         """
-        if UserRiskScoreType.values.index(value) < UserRiskScoreType.values.index(threshold):
+        if UserRiskScoreType.values.index(value) < UserRiskScoreType.values.index(
+            threshold
+        ):
             return ComparisonType.LOWER
-        if UserRiskScoreType.values.index(value) == UserRiskScoreType.values.index(threshold):
+        if UserRiskScoreType.values.index(value) == UserRiskScoreType.values.index(
+            threshold
+        ):
             return ComparisonType.EQUAL
         return ComparisonType.HIGHER
 
@@ -96,11 +109,16 @@ class AlertDetectionType(models.TextChoices):
     """Types of possible alert detections in the format (name=value,label)
 
     * NEW_DEVICE: Login from a new user-agent used by the user
-    * IMP_TRAVEL: Alert if the user logs into the system from a significant distance in a short time
-    * NEW_COUNTRY: The user made a login from a country where they have never logged in before
-    * USER_RISK_THRESHOLD: Alert if the user.risk_score value is equal or higher than the Config.alert_minimum_risk_score
-    * ANONYMOUS_IP_LOGIN: Alert if the login has been made from an anonymous IP
-    * ATYPICAL_COUNTRY: Alert if the login has been made from a country not visited recently
+    * IMP_TRAVEL: Alert if the user logs into the system from a significant
+    distance in a short time
+    * NEW_COUNTRY: The user made a login from a country where they have
+    never logged in before
+    * USER_RISK_THRESHOLD: Alert if the user.risk_score value is equal or
+    higher than the Config.alert_minimum_risk_score
+    * ANONYMOUS_IP_LOGIN: Alert if the login has been made from an
+    anonymous IP
+    * ATYPICAL_COUNTRY: Alert if the login has been made from a country
+    not visited recently
     """
 
     NEW_DEVICE = "New Device", _("Login from new device")
@@ -121,45 +139,81 @@ class AlertDetectionType(models.TextChoices):
 class AlertFilterType(models.TextChoices):
     """Types of possible detection filter applied on alerts to be ignored
 
-    * USER_LEARNING_PERIOD: Alert filtered because the user is into the initial learning behavior period (defined by Config.user_learning_period)
-    * IGNORED_USER_FILTER: Alert filtered because the user is ignored - the user is in the Config.ignored_users list or Config.enabled_users list is populated
-    * IGNORED_IP_FILTER: Alert filtered because the IP is ignored - the ip is in the Config.ignored_ips list
-    * ALLOWED_COUNTRY_FILTER: Alert filtered because the country is whitelisted - the country is in the Config.allowed_countries list
-    * IS_VIP_FILTER: Alert filtered because the user is not vip - Config.alert_is_vip_only is True and the user is not in the Config.vip_users list
-    * ALERT_MINIMUM_RISK_SCORE_FILTER: Alert filtered because the User.risk_score is lower than the threshold set in Config.alert_minimum_risk_score
-    * FILTERED_ALERTS: Alert filtered because this detection type is excluded - the Alert.name detection type is in the Config.filtered_alerts_types list
-    * IS_MOBILE_FILTER: Alert filtered because the login is from a mobile device - Config.ignore_mobile_logins is True
-    * IGNORED_ISP_FILTER: Alert filtered because the ISP is whitelisted - The ISP is in the Config.ignored_ISPs list
-    * IGNORED_IMP_TRAVEL_ALL_SAME_COUNTRY: Alert (imp_travel) filtered because the start_country and the last country are the same - Config.ignored_impossible_travel_all_same_country = True
-    * IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE: Alert (imp_travel) filtered because the couple (start_country, country) is present in the Config.ignored_impossible_travel_countries_couples field
+    * USER_LEARNING_PERIOD: Alert filtered because the user is into the
+    initial learning behavior period (defined by Config.user_learning_period)
+    * IGNORED_USER_FILTER: Alert filtered because the user is ignored - the
+    user is in the Config.ignored_users list or Config.enabled_users list is
+    populated
+    * IGNORED_IP_FILTER: Alert filtered because the IP is ignored - the ip
+    is in the Config.ignored_ips list
+    * ALLOWED_COUNTRY_FILTER: Alert filtered because the country is
+    whitelisted - the country is in the Config.allowed_countries list
+    * IS_VIP_FILTER: Alert filtered because the user is not vip -
+    Config.alert_is_vip_only is True and the user is not in the
+    Config.vip_users list
+    * ALERT_MINIMUM_RISK_SCORE_FILTER: Alert filtered because the
+    User.risk_score is lower than the threshold set in
+    Config.alert_minimum_risk_score
+    * FILTERED_ALERTS: Alert filtered because this detection type is
+    excluded - the Alert.name detection type is in the
+    Config.filtered_alerts_types list
+    * IS_MOBILE_FILTER: Alert filtered because the login is from a mobile
+    device - Config.ignore_mobile_logins is True
+    * IGNORED_ISP_FILTER: Alert filtered because the ISP is whitelisted -
+    The ISP is in the Config.ignored_ISPs list
+    * IGNORED_IMP_TRAVEL_ALL_SAME_COUNTRY: Alert (imp_travel) filtered
+    because the start_country and the last country are the same -
+    Config.ignored_impossible_travel_all_same_country = True
+    * IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE: Alert (imp_travel) filtered
+    because the couple (start_country, country) is present in the
+    Config.ignored_impossible_travel_countries_couples field
     """
 
     USER_LEARNING_PERIOD = "user_learning_period", _(
-        "Alert filtered because the user is into the initial learning behavior period (defined by Config.user_learning_period)"
+        "Alert filtered because the user is into the initial learning "
+        "behavior period (defined by Config.user_learning_period)"
     )
     IGNORED_USER_FILTER = "ignored_users filter", _(
-        "Alert filtered because the user is ignored - the user is in the Config.ignored_users list or Config.enabled_users list is populated"
+        "Alert filtered because the user is ignored - the user is in the "
+        "Config.ignored_users list or Config.enabled_users list is populated"
     )
-    IGNORED_IP_FILTER = "ignored_ips filter", _("Alert filtered because the IP is ignored - the ip is in the Config.ignored_ips list")
+    IGNORED_IP_FILTER = "ignored_ips filter", _(
+        "Alert filtered because the IP is ignored - the ip is in the "
+        "Config.ignored_ips list"
+    )
     ALLOWED_COUNTRY_FILTER = "allowed_countries filter", _(
-        "Alert filtered because the country is whitelisted - the country is in the Config.allowed_countries list"
+        "Alert filtered because the country is whitelisted - the country is "
+        "in the Config.allowed_countries list"
     )
     IS_VIP_FILTER = "is_vip_filter", _(
-        "Alert filtered because the user is not vip - Config.alert_is_vip_only is True and the user is not in the Config.vip_users list"
+        "Alert filtered because the user is not vip - Config.alert_is_vip_only "
+        "is True and the user is not in the Config.vip_users list"
     )
     ALERT_MINIMUM_RISK_SCORE_FILTER = "alert_minimum_risk_score filter", _(
-        "Alert filtered because the User.risk_score is lower than the threshold set in Config.alert_minimum_risk_score"
+        "Alert filtered because the User.risk_score is lower than the "
+        "threshold set in Config.alert_minimum_risk_score"
     )
     FILTERED_ALERTS = "filtered_alerts_types filter", _(
-        "Alert filtered because this detection type is excluded - the Alert.name detection type is in the Config.filtered_alerts_types list"
+        "Alert filtered because this detection type is excluded - the "
+        "Alert.name detection type is in the Config.filtered_alerts_types list"
     )
-    IS_MOBILE_FILTER = "ignore_mobile_logins filter", _("Alert filtered because the login is from a mobile device - Config.ignore_mobile_logins is True")
-    IGNORED_ISP_FILTER = "ignored_ISPs filter", _("Alert filtered because the ISP is whitelisted - The ISP is in the Config.ignored_ISPs list")
+    IS_MOBILE_FILTER = "ignore_mobile_logins filter", _(
+        "Alert filtered because the login is from a mobile device - "
+        "Config.ignore_mobile_logins is True"
+    )
+    IGNORED_ISP_FILTER = "ignored_ISPs filter", _(
+        "Alert filtered because the ISP is whitelisted - The ISP is in the "
+        "Config.ignored_ISPs list"
+    )
     IGNORED_IMP_TRAVEL_ALL_SAME_COUNTRY = "ignored_all_same_country", _(
-        "Alert filtered because impossible travel alerts with the same origin and destination country are configured to be ignored (Config.ignored_impossible_travel_all_same_country)"
+        "Alert filtered because impossible travel alerts with the same origin "
+        "and destination country are configured to be ignored "
+        "(Config.ignored_impossible_travel_all_same_country)"
     )
     IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE = "ignored_country_couple", _(
-        "Alert filtered because the specific origin–destination country pair is listed in the configuration, regardless of order (Config.ignored_impossible_travel_countries_couples)"
+        "Alert filtered because the specific origin–destination country pair "
+        "is listed in the configuration, regardless of order "
+        "(Config.ignored_impossible_travel_countries_couples)"
     )
 
 

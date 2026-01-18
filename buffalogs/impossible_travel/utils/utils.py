@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 
 def build_device_fingerprint(agent: str) -> str:
     """
-    Builds a normalized device fingerprint string: os-osversionmajor-device-browser.
+    Builds a normalized device fingerprint string:
+    os-osversionmajor-device-browser.
     Example output: 'windows-10-desktop-chrome'.
 
     Fallbacks:
@@ -16,7 +17,8 @@ def build_device_fingerprint(agent: str) -> str:
     - Device missing -> 'unknowndevice'
     - Browser missing -> 'unknownbrowser'
 
-    Returns 'unknownos-unknownosmajor-unknowndevice-unknownbrowser' if UA is empty or invalid.
+    Returns 'unknownos-unknownosmajor-unknowndevice-unknownbrowser' if UA is
+    empty or invalid.
     """
 
     UNKNOWN_OS = "unknownos"
@@ -24,7 +26,9 @@ def build_device_fingerprint(agent: str) -> str:
     UNKNOWN_DEVICE = "unknowndevice"
     UNKNOWN_BROWSER = "unknownbrowser"
 
-    UNKNOWN_FINGERPRINT = f"{UNKNOWN_OS}-{UNKNOWN_OS_MAJOR}-{UNKNOWN_DEVICE}-{UNKNOWN_BROWSER}"
+    UNKNOWN_FINGERPRINT = (
+        f"{UNKNOWN_OS}-{UNKNOWN_OS_MAJOR}-{UNKNOWN_DEVICE}-{UNKNOWN_BROWSER}"
+    )
 
     # Check if the agent is provided
     if not agent:
@@ -44,7 +48,8 @@ def build_device_fingerprint(agent: str) -> str:
     # Extract values with fallbacks
     os_family = (os_data.get("family") or UNKNOWN_OS).strip().lower()
     os_major = (os_data.get("major") or UNKNOWN_OS_MAJOR).strip().lower()
-    device_family = (device_data.get("family") or UNKNOWN_DEVICE).strip().lower()
+    device_family_raw = device_data.get("family") or UNKNOWN_DEVICE
+    device_family = device_family_raw.strip().lower()
     browser_family = (ua_data.get("family") or UNKNOWN_BROWSER).strip().lower()
 
     # Normalize agent string for device type detection
@@ -55,7 +60,16 @@ def build_device_fingerprint(agent: str) -> str:
         device_family = "mobile"
     elif "tablet" in agent_lower or "ipad" in agent_lower:
         device_family = "tablet"
-    elif any(x in agent_lower for x in ["x11", "win64", "wow64", "x86_64", "macintosh"]):
+    elif any(
+        x in agent_lower
+        for x in [
+            "x11",
+            "win64",
+            "wow64",
+            "x86_64",
+            "macintosh",
+        ]
+    ):
         device_family = "desktop"
 
     # build fingerprint
