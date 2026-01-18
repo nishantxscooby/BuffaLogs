@@ -18,16 +18,18 @@ def validate_countries_names(values):
 
         value = value.strip()
 
-        if not pycountry.countries.get(
-            alpha_2=value.upper()
-        ) and not pycountry.countries.get(name=value):
+        if not pycountry.countries.get(alpha_2=value.upper()) and not pycountry.countries.get(name=value):
             invalid_entries.append(value)
 
     if invalid_entries:
         raise ValidationError(
-            _("Invalid country identifiers: %(countries)s"),
-            params={"countries": ", ".join(map(str, invalid_entries))},
+            _(
+                "Invalid country identifiers: "
+                "%(countries)s"
+            )
+            % {"countries": ", ".join(invalid_entries)}
         )
+
 
 
 def validate_ips_or_network(values):
