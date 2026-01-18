@@ -1,7 +1,7 @@
-import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
+import logging
 
 
 class BaseIngestion(ABC):
@@ -43,7 +43,9 @@ class BaseIngestion(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def process_user_logins(self, start_date: datetime, end_date: datetime, username: str) -> list:
+    def process_user_logins(
+        self, start_date: datetime, end_date: datetime, username: str
+    ) -> list:
         """Abstract method that implement the extraction of the logins of the given user in the time range defined by (start_date, end_date)
         This method will be different implemented based on the ingestion source used.
 
