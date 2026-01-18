@@ -1,8 +1,8 @@
-from typing import List
+from ipaddress import ip_address, ip_network
 
-import pycountry
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+import pycountry
 
 
 def is_valid_country(value: str) -> bool:
@@ -26,31 +26,34 @@ def is_valid_country(value: str) -> bool:
         return False
 
 
-def validate_countries_names(values: List[str]) -> None:
+def validate_countries_names(values):
     """
-    Validate a list of country identifiers.
-
-    Accepted values:
-    - ISO2 country codes (e.g. "IT", "RO")
-    - Full country names (e.g. "Italy", "Nepal")
+    Accept list of ISO2 country codes (['IT', 'RO'])
+    and reject invalid ones.
     """
     if not isinstance(values, list):
         raise ValidationError(_("Value must be a list."))
 
-    invalid_entries: List[str] = []
+    invalid_entries = []
 
-    for value in values:
-        if not isinstance(value, str):
-            invalid_entries.append(str(value))
-            continue
+    for code in values:
+        if not pycountry.countries.get(alpha_2=code.upper()):
+            invalid_entries.append(code)
 
-        if not is_valid_country(value):
-            invalid_entries.append(value)
+    INVALID_COUNTRY_MSG = "The following country codes are invalid: "
 
-    if invalid_entries:
-        raise ValidationError(
-            _("The following country identifiers are invalid:")
-            % {
-                "countries": ", ".join(invalid_entries),
-            }
-        )
+    raise ValidationError((INVALID_COUNTRY_MSG + ", ".join(invalid_entries)))
+
+
+def validate_ips_or_network(value):
+    try:
+        ip_address(value)
+        return
+    except ValueError:
+        pass
+
+    try:
+        ip_network(value, strict=False)
+        return
+    except ValueError:
+        raise ValidationError(_("Invalid IP address or network"))
