@@ -1,4 +1,7 @@
 ### 3.0.x
+### 3.0.1
+#### Bugfix
+* Created the module for the `utils` folder
 ### 3.0.0
 #### Features
 * Implemented `buffacli` - *a command-line interface tool that provides an alternative to the BuffaLogs web dashboard, allowing users to interact with BuffaLogs directly from the terminal* (by @noble47 - for the Google Summer of Code 2025 program)
