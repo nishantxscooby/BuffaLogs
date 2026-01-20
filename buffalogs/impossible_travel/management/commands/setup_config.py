@@ -50,6 +50,32 @@ def parse_field_value(item: str) -> Tuple[str, Any]:
 
     return field.strip(), parsed
 
+def _reassemble_bracketed_args(items):
+    """
+    Reassemble argparse-split list arguments like:
+    ["field=['A", "B',", "'C']"] -> ["field=['A', 'B', 'C']"]
+    """
+    if not items:
+        return items
+
+    result = []
+    buffer = []
+    open_brackets = 0
+
+    for item in items:
+        open_brackets += item.count("[")
+        open_brackets -= item.count("]")
+
+        buffer.append(item)
+
+        if open_brackets == 0:
+            result.append(" ".join(buffer))
+            buffer = []
+
+    if buffer:
+        result.append(" ".join(buffer))
+
+    return result
 
 class Command(TaskLoggingCommand):
     def create_parser(self, *args, **kwargs):
@@ -128,15 +154,15 @@ class Command(TaskLoggingCommand):
 
         # MODE: manual updates (--override, --append, --remove)
         updates = []
-
+        
         for mode, items in [
             ("override", options["override"]),
             ("remove", options["remove"]),
             ("append", options["append"]),
         ]:
             if items:
+                items = _reassemble_bracketed_args(items)
                 for item in items:
-                    # item is a string "field_name=value" to be parsed
                     field, value = parse_field_value(item)
                     updates.append((field, mode, value))
 

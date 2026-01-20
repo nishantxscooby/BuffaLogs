@@ -20,6 +20,20 @@ from impossible_travel.models import (
     get_default_vip_users,
 )
 
+class TestSetupConfigCommand(TestCase):
+    def test_append_list_with_spaces(self):
+        call_command(
+            "setup_config",
+            "-a",
+            "filtered_alerts_types=['New Device', 'User Risk Threshold', 'Anonymous IP Login']",
+        )
+
+        config = Config.objects.get(id=1)
+        self.assertEqual(
+            config.filtered_alerts_types,
+            ["New Device", "User Risk Threshold", "Anonymous IP Login"],
+        )
+
 
 class ManagementCommandsTestCase(TestCase):
     def setUp(self):
