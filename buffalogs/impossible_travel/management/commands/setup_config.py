@@ -1,3 +1,4 @@
+import ast
 import logging
 from argparse import RawTextHelpFormatter
 from typing import Any, Tuple
@@ -39,8 +40,11 @@ def parse_field_value(item: str) -> Tuple[str, Any]:
     value = value.strip()
 
     if value.startswith("[") and value.endswith("]"):
-        inner = value[1:-1].strip()
-        parsed = [_cast_value(v) for v in inner.split(",") if v.strip()]
+        try:
+            parsed = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            inner = value[1:-1].strip()
+            parsed = [_cast_value(v) for v in inner.split(",") if v.strip()]
     else:
         parsed = _cast_value(value)
 
