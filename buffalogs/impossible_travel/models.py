@@ -97,6 +97,14 @@ class Login(models.Model):
 
         return query
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["timestamp"], name="login_timestamp_idx"),
+            models.Index(fields=["ip"], name="login_ip_idx"),
+            models.Index(fields=["country"], name="login_country_idx"),
+            models.Index(fields=["event_id"], name="login_event_id_idx"),
+        ]
+
 
 class Alert(models.Model):
     name = models.CharField(choices=AlertDetectionType.choices, max_length=30, null=False, blank=False)
