@@ -1,8 +1,5 @@
-import io
-from unittest.mock import patch
-
 from django.conf import settings
-from django.core.management import CommandError, call_command
+from django.core.management import call_command
 from django.db.models.fields import Field
 from django.test import TestCase
 from impossible_travel.constants import AlertDetectionType, UserRiskScoreType
