@@ -8,7 +8,6 @@ from django.test import TestCase
 from impossible_travel.constants import AlertDetectionType, UserRiskScoreType
 
 # isort: off
-# fmt: off
 from impossible_travel.management.commands.setup_config import (
     Command,
     parse_field_value,
@@ -25,7 +24,7 @@ from impossible_travel.models import (
     get_default_risk_score_increment_alerts,
     get_default_vip_users,
 )
-# fmt: on
+
 # isort: on
 
 
@@ -81,13 +80,11 @@ class ManagementCommandsTestCase(TestCase):
         self.assertFalse(config.ignore_mobile_logins)
         self.assertListEqual(config.filtered_alerts_types, [])
         self.assertEqual(
-            config.alert_minimum_risk_score,
-            UserRiskScoreType.NO_RISK,
-        )
+            config.alert_minimum_risk_score, UserRiskScoreType.NO_RISK
+        )  # noqa: E501
         self.assertEqual(
-            config.threshold_user_risk_alert,
-            UserRiskScoreType.NO_RISK,
-        )
+            config.threshold_user_risk_alert, UserRiskScoreType.NO_RISK
+        )  # noqa: E501
         # simulate mgmt command parsing
         args = [
             "-o",
@@ -120,13 +117,11 @@ class ManagementCommandsTestCase(TestCase):
             config.filtered_alerts_types, ["New Device", "User Risk Threshold"]
         )
         self.assertEqual(
-            config.alert_minimum_risk_score,
-            UserRiskScoreType.MEDIUM,
-        )
+            config.alert_minimum_risk_score, UserRiskScoreType.MEDIUM
+        )  # noqa: E501
         self.assertEqual(
-            config.threshold_user_risk_alert,
-            UserRiskScoreType.MEDIUM,
-        )
+            config.threshold_user_risk_alert, UserRiskScoreType.MEDIUM
+        )  # noqa: E501
 
     def test_handle_set_default_values_force(self):
         # Testing the option --set-default-values (force mode)
@@ -168,13 +163,11 @@ class ManagementCommandsTestCase(TestCase):
         self.config.refresh_from_db()
         # check the corrispondence with the default values
         self.assertListEqual(
-            self.config.ignored_users,
-            get_default_ignored_users(),
-        )
+            self.config.ignored_users, get_default_ignored_users()
+        )  # noqa: E501
         self.assertListEqual(
-            self.config.enabled_users,
-            get_default_enabled_users(),
-        )
+            self.config.enabled_users, get_default_enabled_users()
+        )  # noqa: E501
         self.assertListEqual(self.config.vip_users, get_default_vip_users())
         self.assertFalse(self.config.alert_is_vip_only)
         self.assertEqual(self.config.alert_minimum_risk_score, "Medium")
@@ -183,16 +176,14 @@ class ManagementCommandsTestCase(TestCase):
             get_default_risk_score_increment_alerts(),
         )
         self.assertListEqual(
-            self.config.ignored_ips,
-            get_default_ignored_ips(),
-        )
+            self.config.ignored_ips, get_default_ignored_ips()
+        )  # noqa: E501
         self.assertListEqual(
             self.config.allowed_countries, get_default_allowed_countries()
         )
         self.assertListEqual(
-            self.config.ignored_ISPs,
-            get_default_ignored_ISPs(),
-        )
+            self.config.ignored_ISPs, get_default_ignored_ISPs()
+        )  # noqa: E501
         self.assertTrue(self.config.ignore_mobile_logins)
         self.assertListEqual(
             self.config.filtered_alerts_types,
@@ -227,9 +218,8 @@ class ManagementCommandsTestCase(TestCase):
         )
         self.assertTrue(self.config.ignored_impossible_travel_all_same_country)
         self.assertEqual(
-            self.config.ignored_impossible_travel_countries_couples,
-            [],
-        )
+            self.config.ignored_impossible_travel_countries_couples, []
+        )  # noqa: E501
         self.assertEqual(
             self.config.user_learning_period,
             settings.CERTEGO_BUFFALOGS_USER_LEARNING_PERIOD,
@@ -279,9 +269,8 @@ class ManagementCommandsTestCase(TestCase):
         # (not for already populated fields)
         self.assertListEqual(self.config.ignored_users, ["blabla", "user2"])
         self.assertListEqual(
-            self.config.enabled_users,
-            get_default_enabled_users(),
-        )
+            self.config.enabled_users, get_default_enabled_users()
+        )  # noqa: E501
         self.assertListEqual(self.config.vip_users, get_default_vip_users())
         self.assertTrue(self.config.alert_is_vip_only)
         self.assertEqual(self.config.alert_minimum_risk_score, "Medium")
@@ -328,9 +317,8 @@ class ManagementCommandsTestCase(TestCase):
         )
         self.assertTrue(self.config.ignored_impossible_travel_all_same_country)
         self.assertEqual(
-            self.config.ignored_impossible_travel_countries_couples,
-            [],
-        )
+            self.config.ignored_impossible_travel_countries_couples, []
+        )  # noqa: E501
         self.assertEqual(self.config.user_learning_period, 20)
 
     # === Tests for setup_config.py mgmt command -
@@ -358,9 +346,8 @@ class ManagementCommandsTestCase(TestCase):
         with self.assertRaises(CommandError) as cm:
             call_command("setup_config", "-a", "nonexistent_field=lorygold")
         self.assertIn(
-            "Field 'nonexistent_field' does not exist",
-            str(cm.exception),
-        )
+            "Field 'nonexistent_field' does not exist", str(cm.exception)
+        )  # noqa: E501
 
     def test_parse_field_value_empty_list(self):
         # Testing the parse_field_value function with an empty list

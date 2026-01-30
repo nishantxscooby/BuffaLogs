@@ -7,7 +7,13 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.management.base import CommandError
 from django.db.models.fields import Field
-from impossible_travel.management.commands import base_command
+
+# isort: off
+from impossible_travel.management.commands.base_command import (
+    TaskLoggingCommand,
+)
+
+# isort: on
 from impossible_travel.models import Config
 
 logger = logging.getLogger()
@@ -79,7 +85,7 @@ def _reassemble_bracketed_args(items):
     return result
 
 
-class Command(base_command.TaskLoggingCommand):
+class Command(TaskLoggingCommand):
     def create_parser(self, *args, **kwargs):
         config_fields = [
             f.name
@@ -151,11 +157,7 @@ class Command(base_command.TaskLoggingCommand):
         parser.add_argument(
             "--force",
             action="store_true",
-            help=(
-                "Force overwrite existing values with defaults "
-                # split for black
-                "(use with caution)"
-            ),
+            help="Force overwrite existing values with defaults (use with caution)",  # noqa: E501
         )
 
     def handle(self, *args, **options):
@@ -194,14 +196,8 @@ class Command(base_command.TaskLoggingCommand):
 
             config.save()
 
-            msg_forced = (
-                f"BuffaLogs Config: all {len(updated_fields)} fields "
-                "reset to defaults (FORCED)."
-            )
-            msg_updated = (
-                f"BuffaLogs Config: updated {len(updated_fields)} "
-                "empty fields with defaults."
-            )
+            msg_forced = f"BuffaLogs Config: all {len(updated_fields)} fields reset to defaults (FORCED)."  # noqa: E501
+            msg_updated = f"BuffaLogs Config: updated {len(updated_fields)} empty fields with defaults."  # noqa: E501
             msg = msg_forced if force else msg_updated
             self.stdout.write(self.style.SUCCESS(msg))
             return
@@ -222,8 +218,9 @@ class Command(base_command.TaskLoggingCommand):
 
         for field, mode, value in updates:
             if field not in fields_info:
-                msg_err = f"Field '{field}' does not exist in Config model."
-                raise CommandError(msg_err)
+                raise CommandError(
+                    f"Field '{field}' does not exist in Config model."
+                )  # noqa: E501
 
             field_obj = fields_info[field]
             is_list = isinstance(field_obj, ArrayField)
