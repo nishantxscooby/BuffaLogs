@@ -7,7 +7,9 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.management.base import CommandError
 from django.db.models.fields import Field
-from impossible_travel.management.commands.base_command import TaskLoggingCommand
+from impossible_travel.management.commands.base_command import (
+    TaskLoggingCommand,
+)
 from impossible_travel.models import Config
 
 logger = logging.getLogger()
@@ -81,9 +83,14 @@ def _reassemble_bracketed_args(items):
 
 class Command(TaskLoggingCommand):
     def create_parser(self, *args, **kwargs):
-        config_fields = [f.name for f in Config._meta.get_fields() if isinstance(f, Field) and f.editable and not f.auto_created]
+        config_fields = [
+            f.name
+            for f in Config._meta.get_fields()
+            if isinstance(f, Field) and f.editable and not f.auto_created
+        ]
 
-        help_text = f"""
+        help_text = (
+            f"""
         Update values in the Config model.
 
         Available fields:
@@ -98,11 +105,15 @@ class Command(TaskLoggingCommand):
         ./manage.py setup_config -o allowed_countries=["Italy","Romania"]
         ./manage.py setup_config -r ignored_users=[admin]
         ./manage.py setup_config -a alert_is_vip_only=True
-        ./manage.py setup_config -o allowed_countries=["Italy"] -r ignored_users="bot" -r ignored_users=["audit"] -a filtered_alerts_types=["New Device"]
-
+        ./manage.py setup_config -o allowed_countries=["Italy"] """
+            '-r ignored_users="bot" -r ignored_users=["audit"] '
+            '-a filtered_alerts_types=["New Device"]\n'
+            """
         Additional options:
-        --set-default-values   Reset all fields in Config to their default values
+        --set-default-values   Reset all fields in Config to their
+                               default values
         """
+        )
         parser = super().create_parser(*args, **kwargs)
         parser.formatter_class = RawTextHelpFormatter
         parser.description = help_text.strip()
@@ -134,19 +145,29 @@ class Command(TaskLoggingCommand):
         parser.add_argument(
             "--set-default-values",
             action="store_true",
-            help="Initialize configuration fields with default values (already populated values are not modified)",
+            help=(
+                "Initialize configuration fields with default values "
+                "(already populated values are not modified)"
+            ),
         )
         parser.add_argument(
             "--force",
             action="store_true",
-            help="Force overwrite existing values with defaults (use with caution)",
+            help=(
+                "Force overwrite existing values with defaults "
+                "(use with caution)"
+            ),
         )
 
     def handle(self, *args, **options):
         config, _ = Config.objects.get_or_create(id=1)
 
         # get customizable fields in the Config model dinamically
-        fields_info = {f.name: f for f in Config._meta.get_fields() if isinstance(f, Field) and f.editable and not f.auto_created}
+        fields_info = {
+            f.name: f
+            for f in Config._meta.get_fields()
+            if isinstance(f, Field) and f.editable and not f.auto_created
+        }
 
         # MODE: --set-default-values
         if options.get("set_default_values"):
@@ -155,7 +176,11 @@ class Command(TaskLoggingCommand):
 
             for field_name, field_model in list(fields_info.items()):
                 if hasattr(field_model, "default"):
-                    default_value = field_model.default() if callable(field_model.default) else field_model.default
+                    default_value = (
+                        field_model.default()
+                        if callable(field_model.default)
+                        else field_model.default
+                    )
                     current_value = getattr(config, field_name)
 
                     # Safe mode --> update field only if it's empty
@@ -171,9 +196,11 @@ class Command(TaskLoggingCommand):
             config.save()
 
             msg = (
-                f"BuffaLogs Config: all {len(updated_fields)} fields reset to defaults (FORCED)."
+                f"BuffaLogs Config: all {len(updated_fields)} fields reset "
+                "to defaults (FORCED)."
                 if force
-                else f"BuffaLogs Config: updated {len(updated_fields)} empty fields with defaults."
+                else f"BuffaLogs Config: updated {len(updated_fields)} empty "
+                "fields with defaults."
             )
             self.stdout.write(self.style.SUCCESS(msg))
             return
@@ -194,7 +221,9 @@ class Command(TaskLoggingCommand):
 
         for field, mode, value in updates:
             if field not in fields_info:
-                raise CommandError(f"Field '{field}' does not exist in Config model.")
+                raise CommandError(
+                    f"Field '{field}' does not exist in Config model."
+                )
 
             field_obj = fields_info[field]
             is_list = isinstance(field_obj, ArrayField)
@@ -211,7 +240,10 @@ class Command(TaskLoggingCommand):
                     try:
                         validator(val)
                     except ValidationError as e:
-                        raise CommandError(f"Validation error on field '{field}' with value '{val}': {e}")
+                        raise CommandError(
+                            f"Validation error on field '{field}' with "
+                            f"value '{val}': {e}"
+                        )
 
             # Apply changes
             if is_list:
@@ -224,7 +256,10 @@ class Command(TaskLoggingCommand):
                     current = [item for item in current if item not in value]
             else:
                 if mode != "override":
-                    raise CommandError(f"Field '{field}' is not a list. Use --override to set its value.")
+                    raise CommandError(
+                        f"Field '{field}' is not a list. "
+                        "Use --override to set its value."
+                    )
                 current = value
 
             setattr(config, field, current)
