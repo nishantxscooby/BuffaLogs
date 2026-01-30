@@ -7,9 +7,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.management.base import CommandError
 from django.db.models.fields import Field
-from impossible_travel.management.commands.base_command import (
-    TaskLoggingCommand,
-)
+from impossible_travel.management.commands import base_command
 from impossible_travel.models import Config
 
 logger = logging.getLogger()
@@ -81,7 +79,7 @@ def _reassemble_bracketed_args(items):
     return result
 
 
-class Command(TaskLoggingCommand):
+class Command(base_command.TaskLoggingCommand):
     def create_parser(self, *args, **kwargs):
         config_fields = [
             f.name
@@ -155,6 +153,7 @@ class Command(TaskLoggingCommand):
             action="store_true",
             help=(
                 "Force overwrite existing values with defaults "
+                # split for black
                 "(use with caution)"
             ),
         )
@@ -195,13 +194,15 @@ class Command(TaskLoggingCommand):
 
             config.save()
 
-            msg = (
-                f"BuffaLogs Config: all {len(updated_fields)} fields reset "
-                "to defaults (FORCED)."
-                if force
-                else f"BuffaLogs Config: updated {len(updated_fields)} empty "
-                "fields with defaults."
+            msg_forced = (
+                f"BuffaLogs Config: all {len(updated_fields)} fields "
+                "reset to defaults (FORCED)."
             )
+            msg_updated = (
+                f"BuffaLogs Config: updated {len(updated_fields)} "
+                "empty fields with defaults."
+            )
+            msg = msg_forced if force else msg_updated
             self.stdout.write(self.style.SUCCESS(msg))
             return
 
@@ -221,9 +222,8 @@ class Command(TaskLoggingCommand):
 
         for field, mode, value in updates:
             if field not in fields_info:
-                raise CommandError(
-                    f"Field '{field}' does not exist in Config model."
-                )
+                msg_err = f"Field '{field}' does not exist in Config model."
+                raise CommandError(msg_err)
 
             field_obj = fields_info[field]
             is_list = isinstance(field_obj, ArrayField)
