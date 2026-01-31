@@ -140,38 +140,71 @@ class AlertFilterType(models.TextChoices):
     * IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE: Alert (imp_travel) filtered because the couple (start_country, country) is present in the Config.ignored_impossible_travel_countries_couples field
     """
 
-    USER_LEARNING_PERIOD = "user_learning_period", _(
-        "Alert filtered because the user is into the initial learning behavior period (defined by Config.user_learning_period)"
+    USER_LEARNING_PERIOD = (
+        "user_learning_period",
+        _(
+            "Alert filtered because the user is into the initial learning behavior period (defined by Config.user_learning_period)"
+        ),
     )
-    IGNORED_USER_FILTER = "ignored_users filter", _(
-        "Alert filtered because the user is ignored - the user is in the Config.ignored_users list or Config.enabled_users list is populated"
+    IGNORED_USER_FILTER = (
+        "ignored_users filter",
+        _(
+            "Alert filtered because the user is ignored - the user is in the Config.ignored_users list or Config.enabled_users list is populated"
+        ),
     )
-    IGNORED_IP_FILTER = "ignored_ips filter", _(
-        "Alert filtered because the IP is ignored - the ip is in the Config.ignored_ips list"
+    IGNORED_IP_FILTER = (
+        "ignored_ips filter",
+        _(
+            "Alert filtered because the IP is ignored - the ip is in the Config.ignored_ips list"
+        ),
     )
-    ALLOWED_COUNTRY_FILTER = "allowed_countries filter", _(
-        "Alert filtered because the country is whitelisted - the country is in the Config.allowed_countries list"
+    ALLOWED_COUNTRY_FILTER = (
+        "allowed_countries filter",
+        _(
+            "Alert filtered because the country is whitelisted - the country is in the Config.allowed_countries list"
+        ),
     )
-    IS_VIP_FILTER = "is_vip_filter", _(
-        "Alert filtered because the user is not vip - Config.alert_is_vip_only is True and the user is not in the Config.vip_users list"
+    IS_VIP_FILTER = (
+        "is_vip_filter",
+        _(
+            "Alert filtered because the user is not vip - Config.alert_is_vip_only is True and the user is not in the Config.vip_users list"
+        ),
     )
-    ALERT_MINIMUM_RISK_SCORE_FILTER = "alert_minimum_risk_score filter", _(
-        "Alert filtered because the User.risk_score is lower than the threshold set in Config.alert_minimum_risk_score"
+    ALERT_MINIMUM_RISK_SCORE_FILTER = (
+        "alert_minimum_risk_score filter",
+        _(
+            "Alert filtered because the User.risk_score is lower than the threshold set in Config.alert_minimum_risk_score"
+        ),
     )
-    FILTERED_ALERTS = "filtered_alerts_types filter", _(
-        "Alert filtered because this detection type is excluded - the Alert.name detection type is in the Config.filtered_alerts_types list"
+    FILTERED_ALERTS = (
+        "filtered_alerts_types filter",
+        _(
+            "Alert filtered because this detection type is excluded - the Alert.name detection type is in the Config.filtered_alerts_types list"
+        ),
     )
-    IS_MOBILE_FILTER = "ignore_mobile_logins filter", _(
-        "Alert filtered because the login is from a mobile device - Config.ignore_mobile_logins is True"
+    IS_MOBILE_FILTER = (
+        "ignore_mobile_logins filter",
+        _(
+            "Alert filtered because the login is from a mobile device - Config.ignore_mobile_logins is True"
+        ),
     )
-    IGNORED_ISP_FILTER = "ignored_ISPs filter", _(
-        "Alert filtered because the ISP is whitelisted - The ISP is in the Config.ignored_ISPs list"
+    IGNORED_ISP_FILTER = (
+        "ignored_ISPs filter",
+        _(
+            "Alert filtered because the ISP is whitelisted - The ISP is in the Config.ignored_ISPs list"
+        ),
     )
-    IGNORED_IMP_TRAVEL_ALL_SAME_COUNTRY = "ignored_all_same_country", _(
-        "Alert filtered because impossible travel alerts with the same origin and destination country are configured to be ignored (Config.ignored_impossible_travel_all_same_country)"
+    IGNORED_IMP_TRAVEL_ALL_SAME_COUNTRY = (
+        "ignored_all_same_country",
+        _(
+            "Alert filtered because impossible travel alerts with the same origin and destination country are configured to be ignored (Config.ignored_impossible_travel_all_same_country)"
+        ),
     )
-    IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE = "ignored_country_couple", _(
-        "Alert filtered because the specific origin–destination country pair is listed in the configuration, regardless of order (Config.ignored_impossible_travel_countries_couples)"
+    IGNORED_IMP_TRAVEL_COUNTRIES_COUPLE = (
+        "ignored_country_couple",
+        _(
+            "Alert filtered because the specific origin–destination country pair is listed in the configuration, regardless of order (Config.ignored_impossible_travel_countries_couples)"
+        ),
     )
 
 

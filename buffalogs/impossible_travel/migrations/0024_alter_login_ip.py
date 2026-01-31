@@ -14,7 +14,6 @@ def delete_invalid_login_ips(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         (
             "impossible_travel",

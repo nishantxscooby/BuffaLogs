@@ -59,7 +59,7 @@ class Command(TaskLoggingCommand):
         Update values in the Config model.
 
         Available fields:
-        {', '.join(config_fields)}
+        {", ".join(config_fields)}
 
         Usage:
         -a FIELD=VALUE    Append VALUE to list field (only for list fields)
