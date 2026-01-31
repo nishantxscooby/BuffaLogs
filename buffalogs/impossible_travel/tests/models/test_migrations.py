@@ -1,6 +1,7 @@
 from django.test import TransactionTestCase
 from django_test_migrations.migrator import Migrator
 
+
 class BaseMigrationTestCase(TransactionTestCase):
     """
     Resusable base class for migration tests.
