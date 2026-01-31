@@ -53,7 +53,7 @@ class Login(models.Model):
     device_fingerprint = models.TextField(blank=True)
     index = models.TextField()
     event_id = models.TextField()
-    ip = models.TextField()
+    ip = models.GenericIPAddressField(protocol="both", unpack_ipv4=True)
 
     class Meta:
         indexes = [
