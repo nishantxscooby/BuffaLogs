@@ -74,9 +74,7 @@ class TestDeviceFingerprintMigration0022(BaseMigrationTestCase):
         self.assertEqual(second_record.device_fingerprint, "windows-10-desktop-chrome")
 
     def test_invalid_login_ips_are_removed(self):
-        old_state = self.migrator.apply_initial_migration(
-            ("impossible_travel", self.migrate_from)
-        )
+        old_state = self.migrator.apply_initial_migration(("impossible_travel", self.migrate_from))
 
         Login = old_state.apps.get_model("impossible_travel", "Login")
         User = old_state.apps.get_model("impossible_travel", "User")
@@ -86,13 +84,12 @@ class TestDeviceFingerprintMigration0022(BaseMigrationTestCase):
         Login.objects.create(ip="999.999.999.999", user_id=user.id)
         Login.objects.create(ip="1.2.3.4", user_id=user.id)
 
-        new_state = self.migrator.apply_tested_migration(
-            ("impossible_travel", self.migrate_to)
-        )
+        new_state = self.migrator.apply_tested_migration(("impossible_travel", self.migrate_to))
 
         Login = new_state.apps.get_model("impossible_travel", "Login")
 
         assert Login.objects.count() == 2
+
 
 
 
