@@ -16,7 +16,10 @@ def delete_invalid_login_ips(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("impossible_travel", "0023_login_login_timestamp_desc_idx_login_login_ip_idx_and_more"),
+        (
+            "impossible_travel",
+            "0023_login_login_timestamp_desc_idx_login_login_ip_idx_and_more",
+        ),
     ]
 
     operations = [

@@ -1,7 +1,12 @@
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 
-from .constants import AlertDetectionType, AlertFilterType, AlertTagValues, UserRiskScoreType
+from .constants import (
+    AlertDetectionType,
+    AlertFilterType,
+    AlertTagValues,
+    UserRiskScoreType,
+)
 from .models import Alert, Config, TaskSettings, User
 
 
@@ -38,7 +43,9 @@ class ShortLabelChoiceField(forms.ChoiceField):
 
     def __init__(self, *args, **kwargs):
         choices = kwargs.pop("choices", [])
-        formatted_choices = [("", "---------")] + [(value, value) for value, _ in choices]
+        formatted_choices = [("", "---------")] + [
+            (value, value) for value, _ in choices
+        ]
         super().__init__(*args, choices=formatted_choices, required=False, **kwargs)
 
 
