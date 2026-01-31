@@ -89,3 +89,4 @@ class TestDeviceFingerprintMigration0022(BaseMigrationTestCase):
         Login = new_state.apps.get_model("impossible_travel", "Login")
 
         assert Login.objects.count() == 2
+        
