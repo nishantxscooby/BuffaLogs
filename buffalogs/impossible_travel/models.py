@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.functions import Upper
 from django.utils import timezone
 from impossible_travel.constants import AlertDetectionType, AlertFilterType, AlertTagValues, ExecutionModes, UserRiskScoreType
 from impossible_travel.validators import (
@@ -53,6 +54,26 @@ class Login(models.Model):
     index = models.TextField()
     event_id = models.TextField()
     ip = models.TextField()
+
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=["-timestamp"],
+                name="login_timestamp_desc_idx",
+            ),
+            models.Index(
+                fields=["ip"],
+                name="login_ip_idx",
+            ),
+            models.Index(
+                fields=["event_id"],
+                name="login_event_id_idx",
+            ),
+            models.Index(
+                Upper("country"),
+                name="login_country_upper_idx",
+            ),
+        ]
 
     @classmethod
     def apply_filters(
