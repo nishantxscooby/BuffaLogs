@@ -210,7 +210,9 @@ class Command(TaskLoggingCommand):
             if is_list:
                 current = current or []
                 if mode == "append":
-                    current += value
+                    # Only append values that don't already exist (make it idempotent)
+                    new_values = [v for v in value if v not in current]
+                    current += new_values
                 elif mode == "override":
                     current = value
                 elif mode == "remove":

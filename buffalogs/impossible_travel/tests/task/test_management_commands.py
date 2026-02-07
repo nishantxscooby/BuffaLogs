@@ -315,6 +315,27 @@ class ManagementCommandsTestCase(TestCase):
         config.refresh_from_db()
         self.assertListEqual(config.filtered_alerts_types, ["Imp Travel"])
 
+    def test_setup_config_append_idempotent(self):
+        """Test that running append multiple times doesn't create duplicates (idempotent behavior)"""
+        Config.objects.all().delete()
+        config = Config.objects.create(id=1, filtered_alerts_types=[])
+
+        # Run append command first time
+        call_command("setup_config", "-a", "filtered_alerts_types=['New Device','User Risk Threshold']")
+        config.refresh_from_db()
+        self.assertListEqual(config.filtered_alerts_types, ["New Device", "User Risk Threshold"])
+
+        # Run the SAME command again - should NOT create duplicates
+        call_command("setup_config", "-a", "filtered_alerts_types=['New Device','User Risk Threshold']")
+        config.refresh_from_db()
+        self.assertListEqual(config.filtered_alerts_types, ["New Device", "User Risk Threshold"])
+
+        # Append with mix of existing and new values
+        call_command("setup_config", "-a", "filtered_alerts_types=['User Risk Threshold','Anonymous IP Login']")
+        config.refresh_from_db()
+        # Should only add 'Anonymous IP Login', not duplicate 'User Risk Threshold'
+        self.assertListEqual(config.filtered_alerts_types, ["New Device", "User Risk Threshold", "Anonymous IP Login"])
+
 
 class ResetUserRiskScoreCommandTests(TestCase):
     def setUp(self):
