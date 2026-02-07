@@ -31,7 +31,18 @@ def _cast_value(val: str) -> Any:
 
 
 def parse_field_value(item: str) -> Tuple[str, Any]:
-    """Parse a string of the form FIELD=VALUE or FIELD=[val1,val2]"""
+    """Parse a string of the form FIELD=VALUE or FIELD=[val1,val2]
+
+    Supports multiple formats:
+    - FIELD=value (single value)
+    - FIELD=[val1,val2,val3] (list without spaces in values)
+    - FIELD=['val 1','val 2'] (list with quoted values containing spaces)
+    - FIELD=["val 1","val 2"] (list with double-quoted values)
+    - FIELD=[val 1, val 2] (list with spaces, no quotes - legacy support)
+
+    IMPORTANT: When brackets [...] are present, ALWAYS returns a list,
+    even for single elements. This is required for ArrayField validation.
+    """
     if "=" not in item:
         raise CommandError(f"Invalid syntax '{item}': must be FIELD=VALUE")
 
@@ -39,12 +50,52 @@ def parse_field_value(item: str) -> Tuple[str, Any]:
     value = value.strip()
 
     if value.startswith("[") and value.endswith("]"):
+        # This is a list - must ALWAYS return a list type
         inner = value[1:-1].strip()
-        parsed = [_cast_value(v) for v in inner.split(",") if v.strip()]
-    else:
-        parsed = _cast_value(value)
+        if not inner:
+            # Empty list case: []
+            parsed = []
+        else:
+            # Check if the input has any quotes
+            has_quotes = ("'" in inner) or ('"' in inner)
 
-    return field.strip(), parsed
+            if has_quotes:
+                # Manual parsing for quoted values (handles all cases reliably)
+                parsed_values = []
+                current = ""
+                in_quotes = False
+                quote_char = None
+
+                for char in inner:
+                    if char in ('"', "'") and (not in_quotes or char == quote_char):
+                        in_quotes = not in_quotes
+                        quote_char = char if in_quotes else None
+                        current += char
+                    elif char == "," and not in_quotes:
+                        # Found a comma outside quotes - this is a separator
+                        if current.strip():
+                            parsed_values.append(current.strip())
+                        current = ""
+                    else:
+                        current += char
+
+                # Don't forget the last value
+                if current.strip():
+                    parsed_values.append(current.strip())
+
+                # Now cast each value (this also strips quotes)
+                parsed = [_cast_value(v) for v in parsed_values if v.strip()]
+            else:
+                # No quotes - split by comma (handles both "a,b,c" and "a, b, c")
+                parsed = [_cast_value(v.strip()) for v in inner.split(",") if v.strip()]
+
+        # CRITICAL: Always return a list when brackets are present
+        # This ensures ArrayField validators receive the correct type
+        return field.strip(), parsed
+    else:
+        # Single value without brackets - can be a non-list type
+        parsed = _cast_value(value)
+        return field.strip(), parsed
 
 
 class Command(TaskLoggingCommand):
@@ -148,14 +199,12 @@ class Command(TaskLoggingCommand):
             if is_list and not isinstance(value, list):
                 value = [value]
 
-            # Validate values
-            values_to_validate = value if is_list else [value]
-            for val in values_to_validate:
-                for validator in getattr(field_obj, "validators", []):
-                    try:
-                        validator(val)
-                    except ValidationError as e:
-                        raise CommandError(f"Validation error on field '{field}' with value '{val}': {e}")
+            # Validate the value (validators expect the full value, not individual elements)
+            for validator in getattr(field_obj, "validators", []):
+                try:
+                    validator(value)
+                except ValidationError as e:
+                    raise CommandError(f"Validation error on field '{field}' with value '{value}': {e}")
 
             # Apply changes
             if is_list:
